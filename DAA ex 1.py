@@ -96,6 +96,7 @@ def performance_analysis():
 print("enter an arry :")
 arr=list(map(int,input().split()))
 arr.sort()
+target=int(input("enter value :"))
 idx, comps = interpolation_search(arr, target)
 
 print("Interpolation Search Example")
