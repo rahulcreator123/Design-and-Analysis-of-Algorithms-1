@@ -93,9 +93,9 @@ def performance_analysis():
 
 
 
-arr = [2, 5, 10, 15, 23, 35, 48, 60, 75, 90, 105, 120]
-target = 35
-
+print("enter an arry :")
+arr=list(map(int,input().split()))
+arr.sort()
 idx, comps = interpolation_search(arr, target)
 
 print("Interpolation Search Example")
