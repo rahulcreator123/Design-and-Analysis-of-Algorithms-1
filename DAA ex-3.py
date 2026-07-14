@@ -1,15 +1,14 @@
 import heapq
 
-# ---------- Union-Find (Disjoint Set) for Kruskal's Algorithm ----------
+# ---------- Union-Find (Disjoint Set) for Kruskal ----------
 class UnionFind:
     def __init__(self, n):
         self.parent = list(range(n))
         self.rank = [0] * n
 
     def find(self, x):
-        # Path Compression
         if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
+            self.parent[x] = self.find(self.parent[x])  # Path Compression
         return self.parent[x]
 
     def union(self, x, y):
@@ -19,7 +18,6 @@ class UnionFind:
         if rx == ry:
             return False
 
-        # Union by Rank
         if self.rank[rx] < self.rank[ry]:
             rx, ry = ry, rx
 
@@ -33,11 +31,7 @@ class UnionFind:
 
 # ---------- Kruskal's Algorithm ----------
 def kruskal(n, edges):
-    """
-    edges: List of (weight, u, v)
-    Returns: MST edges and total cost
-    """
-    edges.sort()  # Sort edges by weight
+    edges.sort()
 
     uf = UnionFind(n)
     mst = []
@@ -56,10 +50,6 @@ def kruskal(n, edges):
 
 # ---------- Prim's Algorithm ----------
 def prim(n, adj, start=0):
-    """
-    adj: Adjacency list {u: [(v, weight), ...]}
-    Returns: MST edges and total cost
-    """
     INF = float('inf')
 
     key = [INF] * n
@@ -93,27 +83,21 @@ def prim(n, adj, start=0):
     return mst, cost
 
 
-# ---------- Graph Definition ----------
-n = 7
+# ---------- User Input ----------
+n = int(input("Enter the number of vertices: "))
+e = int(input("Enter the number of edges: "))
 
-edges = [
-    (7, 0, 1),
-    (5, 0, 3),
-    (8, 1, 2),
-    (9, 1, 3),
-    (7, 1, 4),
-    (5, 2, 4),
-    (15, 3, 4),
-    (6, 3, 5),
-    (8, 4, 5),
-    (9, 4, 6),
-    (11, 5, 6)
-]
-
-# Build Adjacency List
+edges = []
 adj = {}
 
-for w, u, v in edges:
+print("\nEnter each edge in the format:")
+print("Source Destination Weight")
+
+for i in range(e):
+    u, v, w = map(int, input(f"Edge {i+1}: ").split())
+
+    edges.append((w, u, v))
+
     adj.setdefault(u, []).append((v, w))
     adj.setdefault(v, []).append((u, w))
 
@@ -123,8 +107,8 @@ k_mst, k_cost = kruskal(n, edges[:])
 p_mst, p_cost = prim(n, adj)
 
 
-# ---------- Output ----------
-print("=== Kruskal's Minimum Spanning Tree ===")
+# ---------- Display Results ----------
+print("\n=== Kruskal's Minimum Spanning Tree ===")
 for u, v, w in k_mst:
     print(f"Edge ({u} - {v})  Weight = {w}")
 print("Total MST Cost =", k_cost)
