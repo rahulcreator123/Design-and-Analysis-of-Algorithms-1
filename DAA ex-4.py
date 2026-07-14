@@ -1,4 +1,11 @@
+import streamlit as st
 import heapq
+
+st.set_page_config(page_title="DAA Experiment 4", layout="centered")
+
+st.title("DAA Experiment 4")
+st.subheader("Dijkstra's Shortest Path Algorithm")
+
 
 # ---------- Dijkstra's Algorithm ----------
 def dijkstra(graph, source, n):
@@ -6,12 +13,11 @@ def dijkstra(graph, source, n):
     prev = [None] * n
 
     dist[source] = 0
-    pq = [(0, source)]  # (distance, vertex)
+    pq = [(0, source)]
 
     while pq:
         d, u = heapq.heappop(pq)
 
-        # Ignore outdated entries
         if d > dist[u]:
             continue
 
@@ -40,39 +46,78 @@ def reconstruct_path(prev, source, target):
 
 
 # ---------- User Input ----------
-n = int(input("Enter the number of vertices: "))
-e = int(input("Enter the number of edges: "))
+st.header("Graph Input")
 
-graph = {i: [] for i in range(n)}
+n = st.number_input("Number of Vertices", min_value=2, step=1)
+e = st.number_input("Number of Edges", min_value=1, step=1)
 
-print("\nEnter each edge in the format:")
-print("Source Destination Weight")
+edges = []
 
-for i in range(e):
-    u, v, w = map(int, input(f"Edge {i+1}: ").split())
-    graph[u].append((v, w))      # Directed graph
-    # Uncomment the next line for an undirected graph
-    # graph[v].append((u, w))
+st.write("Enter each edge:")
 
-source = int(input("\nEnter the source vertex: "))
+for i in range(int(e)):
+    c1, c2, c3 = st.columns(3)
 
-# ---------- Run Algorithm ----------
-dist, prev = dijkstra(graph, source, n)
+    with c1:
+        u = st.number_input(
+            f"Source {i+1}",
+            min_value=0,
+            max_value=int(n)-1,
+            key=f"u{i}"
+        )
 
-# ---------- Display Results ----------
-print(f"\nShortest Paths from Vertex {source}")
-print("-" * 60)
-print("{:<10}{:<12}{}".format("Vertex", "Distance", "Path"))
-print("-" * 60)
+    with c2:
+        v = st.number_input(
+            f"Destination {i+1}",
+            min_value=0,
+            max_value=int(n)-1,
+            key=f"v{i}"
+        )
 
-for v in range(n):
-    path = reconstruct_path(prev, source, v)
+    with c3:
+        w = st.number_input(
+            f"Weight {i+1}",
+            min_value=1,
+            step=1,
+            key=f"w{i}"
+        )
 
-    if dist[v] == float('inf'):
-        distance = "INF"
-        path_str = "No Path"
-    else:
-        distance = dist[v]
-        path_str = " -> ".join(map(str, path))
+    edges.append((int(u), int(v), int(w)))
 
-    print("{:<10}{:<12}{}".format(v, distance, path_str))
+source = st.number_input(
+    "Source Vertex",
+    min_value=0,
+    max_value=int(n)-1,
+    step=1
+)
+
+if st.button("Run Dijkstra"):
+
+    graph = {i: [] for i in range(int(n))}
+
+    for u, v, w in edges:
+        graph[u].append((v, w))
+
+    dist, prev = dijkstra(graph, int(source), int(n))
+
+    st.success(f"Shortest Paths from Vertex {source}")
+
+    result = []
+
+    for v in range(int(n)):
+        path = reconstruct_path(prev, int(source), v)
+
+        if dist[v] == float('inf'):
+            distance = "INF"
+            path_str = "No Path"
+        else:
+            distance = dist[v]
+            path_str = " -> ".join(map(str, path))
+
+        result.append({
+            "Vertex": v,
+            "Distance": distance,
+            "Path": path_str
+        })
+
+    st.table(result)_str))
