@@ -120,4 +120,4 @@ if st.button("Run Dijkstra"):
             "Path": path_str
         })
 
-    st.table(result)_str))
+    st.table(result)
