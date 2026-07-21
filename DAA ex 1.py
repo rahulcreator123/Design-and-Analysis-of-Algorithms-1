@@ -186,4 +186,4 @@ Interpolation Search is an improved version of Binary Search for **uniformly dis
 
 Instead of checking the middle element, it estimates the probable position of the target.
 
-### Formula
+### Formula """)
