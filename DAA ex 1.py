@@ -3,16 +3,21 @@ import random
 import time
 import pandas as pd
 
+# ---------------------------------
+# Page Configuration
+# ---------------------------------
 st.set_page_config(page_title="Interpolation Search", page_icon="🔍")
 
 st.title("🔍 Interpolation Search")
+st.write("Compare **Interpolation Search** with **Binary Search**.")
 
 # ---------------------------------
 # Interpolation Search
 # ---------------------------------
 def interpolation_search(arr, target):
 
-    low, high = 0, len(arr) - 1
+    low = 0
+    high = len(arr) - 1
     comparisons = 0
 
     while low <= high and arr[low] <= target <= arr[high]:
@@ -51,12 +56,14 @@ def interpolation_search(arr, target):
 # ---------------------------------
 def binary_search(arr, target):
 
-    low, high = 0, len(arr) - 1
+    low = 0
+    high = len(arr) - 1
     comparisons = 0
 
     while low <= high:
 
         comparisons += 1
+
         mid = (low + high) // 2
 
         if arr[mid] == target:
@@ -74,40 +81,51 @@ def binary_search(arr, target):
 # ---------------------------------
 # User Input
 # ---------------------------------
-st.subheader("Enter Sorted Array")
+st.subheader("Input Array")
 
 array_input = st.text_input(
-    "Array Elements (comma separated)",
+    "Enter Array Elements (comma separated)",
     "5,12,18,24,31,45,52,60,71,89"
 )
 
 try:
     arr = [int(x.strip()) for x in array_input.split(",")]
+
+    if len(arr) == 0:
+        st.error("Array cannot be empty.")
+        st.stop()
+
     arr.sort()
 
 except:
-    st.error("Please enter valid integers.")
+    st.error("Please enter valid integers separated by commas.")
     st.stop()
 
-target = st.number_input("Enter Target", value=31)
+target = st.number_input(
+    "Enter Target Element",
+    value=31,
+    step=1
+)
 
 # ---------------------------------
-# Search
+# Search Button
 # ---------------------------------
 if st.button("Search"):
 
     idx, comps = interpolation_search(arr, target)
 
-    st.subheader("Result")
+    st.subheader("Search Result")
 
-    st.write("**Sorted Array:**", arr)
+    st.write("**Sorted Array:**")
+    st.write(arr)
 
     if idx != -1:
-        st.success(f"Element Found at Index : {idx}")
+        st.success(f"✅ Element found at index {idx}")
     else:
-        st.error("Element Not Found")
+        st.error("❌ Element not found")
 
-    st.info(f"Comparisons : {comps}")
+    st.info(f"Interpolation Search Comparisons: {comps}")
+
 
 # ---------------------------------
 # Performance Analysis
@@ -123,9 +141,9 @@ if st.button("Run Performance Analysis"):
     for size in sizes:
 
         arr = sorted(random.sample(range(size * 10), size))
-        target = arr[random.randint(0, size - 1)]
+        target = random.choice(arr)
 
-        # Interpolation Search
+        # Interpolation Search Timing
         start = time.perf_counter()
 
         for _ in range(100):
@@ -133,7 +151,7 @@ if st.button("Run Performance Analysis"):
 
         is_time = ((time.perf_counter() - start) / 100) * 1000
 
-        # Binary Search
+        # Binary Search Timing
         start = time.perf_counter()
 
         for _ in range(100):
@@ -142,30 +160,30 @@ if st.button("Run Performance Analysis"):
         bs_time = ((time.perf_counter() - start) / 100) * 1000
 
         results.append({
-            "Size": size,
-            "IS Time (ms)": round(is_time, 4),
-            "BS Time (ms)": round(bs_time, 4),
-            "IS Comparisons": comp_is,
-            "BS Comparisons": comp_bs
+            "Array Size": size,
+            "Interpolation Time (ms)": round(is_time, 5),
+            "Binary Time (ms)": round(bs_time, 5),
+            "Interpolation Comparisons": comp_is,
+            "Binary Comparisons": comp_bs
         })
 
     df = pd.DataFrame(results)
 
     st.dataframe(df, use_container_width=True)
 
+
 # ---------------------------------
 # Theory
 # ---------------------------------
 st.markdown("---")
 
-st.markdown("""
-## Theory
+st.header("Theory")
 
+st.markdown("""
 ### Interpolation Search
 
-Interpolation Search improves Binary Search by estimating the probable position
-of the target using the values in the array.
+Interpolation Search is an improved version of Binary Search for **uniformly distributed sorted arrays**.
 
-It works best when the data is **uniformly distributed**.
+Instead of checking the middle element, it estimates the probable position of the target.
 
 ### Formula
